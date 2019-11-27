@@ -36,7 +36,7 @@ server.post("/auth/login", (req, res) => {
   try {
     if (isUserExist(req.body)) {
       const token = jwt.sign(req.body, SECRET_KEY, { expiresIn });
-      //send cookie
+      //jsonp cookie
       res.cookie("access_token", token, {
         //time exprire
         maxAge: 500000,
@@ -44,7 +44,7 @@ server.post("/auth/login", (req, res) => {
         httpOnly: true
       });
       console.log("login successful");
-      res.status(200).send({ message: "Login successful" });
+      res.status(200).jsonp({ message: "Login successful" });
     } else {
       res.status(400).jsonp({ message: "username or password invalid" });
       throw new Error("username or password invalid");
@@ -60,7 +60,7 @@ server.post("/auth/register", (req, res) => {
   //check if user doesn't exist
   console.log(req.body);
   if (isUserExist(req.body)) {
-    res.status(409).json({ message: "username already exist" });
+    res.status(409).jsonp({ message: "username already exist" });
   }
   try {
     const { username, email, password } = req.body;
@@ -79,11 +79,11 @@ server.post("/auth/register", (req, res) => {
         ]
       };
       fs.writeFile("./db.json", JSON.stringify(newData), err => {
-        res.status(201).send({ message: "create success" });
+        res.status(201).jsonp({ message: "create success" });
       });
     });
   } catch (err) {
-    res.status(500).send(err.toString());
+    res.status(500).jsonp(err.toString());
   }
 });
 
